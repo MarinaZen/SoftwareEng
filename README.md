@@ -3,6 +3,7 @@
 -Requirements
 
 bcrypt==3.1.4
+
 Flask==1.0
 Flask-Bcrypt==0.7.1
 Flask-Login==0.4.1
