@@ -1,14 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="content-section">
-    <div class="media">
-      <img class="rounded-circle account-img" src="{{ image_file }}">
-      <div class="media-body">
-        <h2 class="account-heading">{{ current_user.username }}</h2>
-        <p class="text-secondary">{{ current_user.email }}</p>
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <div class="media-body">
+          <h2 class="account-heading">{{ current_user.username }}</h2>
+          <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
       </div>
-    </div>
-    <!-- FORM HERE -->
         <form method="POST" action="" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
@@ -47,15 +46,12 @@
                         {% for error in form.picture.errors %}
                             <span class="text-danger">{{ error }}</span></br>
                         {% endfor %}
-                    {% endif%}
-
+                    {% endif %}
                 </div>
-        
             </fieldset>
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
         </form>
-        
-  </div>
+    </div>
 {% endblock content %}
