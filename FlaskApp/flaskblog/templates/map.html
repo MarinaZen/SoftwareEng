@@ -1,348 +1,205 @@
-<!DOCTYPE html>
-<head>    
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <script>L_PREFER_CANVAS=false; L_NO_TOUCH=false; L_DISABLE_3D=false;</script>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.4.0/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.4.0/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
-    <link rel="stylesheet" href="https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css"/>
-    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
-    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
-    
-    <meta name="viewport" content="width=device-width,
-        initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <style>#map_882b453ef1ef408490bf3f3b84c5e28f {
-        position: relative;
-        width: 100.0%;
-        height: 100.0%;
-        left: 0.0%;
-        top: 0.0%;
-        }
-    </style>
-    
-            <style> #vega_c2ad2f70b65840d2b32d4ebb2b3b92fb {
-                position : relative;
-                width : 450.0px;
-                height: 250.0px;
-                left: 0.0%;
-                top: 0.0%;
-            </style>
-            
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/1.4.3/vega.min.js"></script>
-</head>
-<body>    
-    
-    <div class="folium-map" id="map_882b453ef1ef408490bf3f3b84c5e28f" ></div>
-</body>
-<script>    
-    
-    
-        var bounds = null;
+{% extends "layout.html" %}
+{% block content %}
+    <div id="mapid"></div>
+
+<script type="text/javascript" >
+
+    var home = {
+        lat: 45.465,
+        lng: 9.19,
+        zoom: 12.5
+    };
+
+    var mapboxUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}';
+    var accessToken = 'pk.eyJ1IjoibWFyaXplbiIsImEiOiJjanAxNGNsaHExNHN2M2pwNGUwYTdsOTdiIn0.ccfbhqb33KMZX5kIcwqauQ';
+
+    var grayscale = L.tileLayer(mapboxUrl, {
+                    id: 'mapbox.light', 
+                    attribution: '', 
+                    maxZoom: 20, 
+                    accessToken: accessToken
+                    }),
+        streets = L.tileLayer(mapboxUrl, {
+                    id: 'mapbox.streets', 
+                    attribution: '', 
+                    maxZoom: 20, 
+                    accessToken: accessToken
+                    }),
+        satellite = L.tileLayer(mapboxUrl, {
+                    id: 'mapbox.satellite', 
+                    attribution: '', 
+                    maxZoom: 20, 
+                    accessToken: accessToken
+                    });
     
 
-    var map_882b453ef1ef408490bf3f3b84c5e28f = L.map(
-        'map_882b453ef1ef408490bf3f3b84c5e28f', {
-        center: [42.3601, -71.0589],
-        zoom: 12,
-        maxBounds: bounds,
-        layers: [],
-        worldCopyJump: false,
-        crs: L.CRS.EPSG3857,
-        zoomControl: true,
+    var url = [{
+            "type": "FeatureCollection",
+            "name": "stations",
+            "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+            "features": [
+            { "type": "Feature", "properties": { "ID": 1, "BIKE_SH": "001 Duomo 1", "INDIRIZZO": "P.za Duomo", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.465, "lon": 9.189 }, "geometry": { "type": "Point", "coordinates": [ 9.189029797817104, 45.464723699741583 ] } },
+            { "type": "Feature", "properties": { "ID": 2, "BIKE_SH": "002 San Babila", "INDIRIZZO": "P.za S.Babila", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.466, "lon": 9.198 }, "geometry": { "type": "Point", "coordinates": [ 9.197583379174052, 45.466472877583051 ] } },
+            { "type": "Feature", "properties": { "ID": 3, "BIKE_SH": "003 Cadorna 1", "INDIRIZZO": "P.za Cadorna", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.468, "lon": 9.176 }, "geometry": { "type": "Point", "coordinates": [ 9.175661640836314, 45.468002901526347 ] } },
+            { "type": "Feature", "properties": { "ID": 4, "BIKE_SH": "004 Lanza", "INDIRIZZO": "L.go Greppi", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.472, "lon": 9.182 }, "geometry": { "type": "Point", "coordinates": [ 9.181970120449469, 45.47227400329264 ] } },
+            { "type": "Feature", "properties": { "ID": 5, "BIKE_SH": "005 Università Cattolica", "INDIRIZZO": "P.za S.Ambrogio", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.463, "lon": 9.176 }, "geometry": { "type": "Point", "coordinates": [ 9.176497894604566, 45.463041732015007 ] } },
+            { "type": "Feature", "properties": { "ID": 6, "BIKE_SH": "006 San Giorgio", "INDIRIZZO": "P.za S.Giorgio", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.461, "lon": 9.184 }, "geometry": { "type": "Point", "coordinates": [ 9.183620940504658, 45.46088945727795 ] } },
+            { "type": "Feature", "properties": { "ID": 7, "BIKE_SH": "007 Santa Maria Beltrade", "INDIRIZZO": "P.za S.Maria Beltrade", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.463, "lon": 9.187 }, "geometry": { "type": "Point", "coordinates": [ 9.186769165340538, 45.462785773527088 ] } },
+            { "type": "Feature", "properties": { "ID": 8, "BIKE_SH": "008 Velasca", "INDIRIZZO": "P.za Velasca", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.46, "lon": 9.19 }, "geometry": { "type": "Point", "coordinates": [ 9.190214604055894, 45.460053254008528 ] } },
+            { "type": "Feature", "properties": { "ID": 9, "BIKE_SH": "009 Santo Stefano", "INDIRIZZO": "P.za S.Stefano", "STALLI": 18, "LOCALIZ": "Marciapiede", "lat": 45.462, "lon": 9.195 }, "geometry": { "type": "Point", "coordinates": [ 9.195326400189597, 45.462364979789157 ] } },
+            { "type": "Feature", "properties": { "ID": 10, "BIKE_SH": "010 Missori", "INDIRIZZO": "P.za Missori", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.461, "lon": 9.188 }, "geometry": { "type": "Point", "coordinates": [ 9.188151988046812, 45.461295083444057 ] } },
+            { "type": "Feature", "properties": { "ID": 11, "BIKE_SH": "011 Castello \"Acquario civico\"", "INDIRIZZO": "Via Gadio", "STALLI": 18, "LOCALIZ": "Marciapiede", "lat": 45.472, "lon": 9.179 }, "geometry": { "type": "Point", "coordinates": [ 9.179424446815974, 45.472453152470969 ] } },
+            { "type": "Feature", "properties": { "ID": 12, "BIKE_SH": "012 San Lorenzo \"Colonne\"", "INDIRIZZO": "Via Pio IV", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.459, "lon": 9.181 }, "geometry": { "type": "Point", "coordinates": [ 9.181479448452107, 45.458602143646125 ] } },
+            { "type": "Feature", "properties": { "ID": 13, "BIKE_SH": "013 Senato", "INDIRIZZO": "Via Senato", "STALLI": 18, "LOCALIZ": "Marciapiede", "lat": 45.471, "lon": 9.197 }, "geometry": { "type": "Point", "coordinates": [ 9.197453380582335, 45.47054671412053 ] } },
+            { "type": "Feature", "properties": { "ID": 14, "BIKE_SH": "014 San Barnaba \"H Mangiagalli\"", "INDIRIZZO": "Via S. Barnaba", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.46, "lon": 9.199 }, "geometry": { "type": "Point", "coordinates": [ 9.198520917934518, 45.459516004188629 ] } },
+            { "type": "Feature", "properties": { "ID": 15, "BIKE_SH": "015 Cantore", "INDIRIZZO": "P.za Cantore", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.456, "lon": 9.173 }, "geometry": { "type": "Point", "coordinates": [ 9.172811604634566, 45.455800879284581 ] } },
+            { "type": "Feature", "properties": { "ID": 16, "BIKE_SH": "016 Moscova", "INDIRIZZO": "L.go La Foppa", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.478, "lon": 9.185 }, "geometry": { "type": "Point", "coordinates": [ 9.184603117550653, 45.477530063079982 ] } },
+            { "type": "Feature", "properties": { "ID": 17, "BIKE_SH": "017 Legnano \"Arena civica\"", "INDIRIZZO": "Via Legnano", "STALLI": 18, "LOCALIZ": "Marciapiede", "lat": 45.477, "lon": 9.181 }, "geometry": { "type": "Point", "coordinates": [ 9.180863176143303, 45.477203774869828 ] } },
+            { "type": "Feature", "properties": { "ID": 18, "BIKE_SH": "018 Tommaseo", "INDIRIZZO": "P.za Tommaseo", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.47, "lon": 9.167 }, "geometry": { "type": "Point", "coordinates": [ 9.166540850990756, 45.469505139711366 ] } },
+            { "type": "Feature", "properties": { "ID": 19, "BIKE_SH": "019 Santa Sofia", "INDIRIZZO": "Via S.Sofia", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.456, "lon": 9.188 }, "geometry": { "type": "Point", "coordinates": [ 9.188160616736234, 45.456333290578883 ] } },
+            { "type": "Feature", "properties": { "ID": 20, "BIKE_SH": "020 Erculea", "INDIRIZZO": "P.za Erculea", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.459, "lon": 9.19 }, "geometry": { "type": "Point", "coordinates": [ 9.189607002525591, 45.459084117539071 ] } },
+            { "type": "Feature", "properties": { "ID": 21, "BIKE_SH": "021 Università Bocconi 1", "INDIRIZZO": "Via Bocconi", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.449, "lon": 9.19 }, "geometry": { "type": "Point", "coordinates": [ 9.190441308541562, 45.448577978451617 ] } },
+            { "type": "Feature", "properties": { "ID": 22, "BIKE_SH": "022 Medaglie d'Oro 1", "INDIRIZZO": "C.so Lodi", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.451, "lon": 9.204 }, "geometry": { "type": "Point", "coordinates": [ 9.204089236151679, 45.451210382564014 ] } },
+            { "type": "Feature", "properties": { "ID": 23, "BIKE_SH": "023 Regina Margherita", "INDIRIZZO": "V.le Regina Margherita", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.458, "lon": 9.205 }, "geometry": { "type": "Point", "coordinates": [ 9.205259981549297, 45.458248684192711 ] } },
+            { "type": "Feature", "properties": { "ID": 24, "BIKE_SH": "024 Tricolore", "INDIRIZZO": "C.so Concordia", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.468, "lon": 9.207 }, "geometry": { "type": "Point", "coordinates": [ 9.207325082259382, 45.467964942433014 ] } },
+            { "type": "Feature", "properties": { "ID": 25, "BIKE_SH": "025 Centrale 1", "INDIRIZZO": "P.za Duca d'Aosta sx", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.485, "lon": 9.202 }, "geometry": { "type": "Point", "coordinates": [ 9.202482634621161, 45.485421410866948 ] } },
+            { "type": "Feature", "properties": { "ID": 26, "BIKE_SH": "026 Centrale 2", "INDIRIZZO": "P.za Duca d'Aosta dx", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.485, "lon": 9.204 }, "geometry": { "type": "Point", "coordinates": [ 9.204244276003429, 45.484539303625311 ] } },
+            { "type": "Feature", "properties": { "ID": 27, "BIKE_SH": "027 P.ta Venezia - Oberdan", "INDIRIZZO": "Bastioni di P.ta Venezia", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.475, "lon": 9.205 }, "geometry": { "type": "Point", "coordinates": [ 9.204549351989694, 45.474673373856781 ] } },
+            { "type": "Feature", "properties": { "ID": 28, "BIKE_SH": "028 San Giovanni sul Muro", "INDIRIZZO": "L.go Callas", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.467, "lon": 9.181 }, "geometry": { "type": "Point", "coordinates": [ 9.181446126612734, 45.467465787322169 ] } },
+            { "type": "Feature", "properties": { "ID": 29, "BIKE_SH": "029 San Pietro in Gessate \"Tribunale\"", "INDIRIZZO": "C.so P.ta Vittoria", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.462, "lon": 9.201 }, "geometry": { "type": "Point", "coordinates": [ 9.201391123804912, 45.462395233694345 ] } },
+            { "type": "Feature", "properties": { "ID": 30, "BIKE_SH": "030 Crocetta", "INDIRIZZO": "L.go Crocetta", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.456, "lon": 9.196 }, "geometry": { "type": "Point", "coordinates": [ 9.19566715617678, 45.456244025097604 ] } },
+            { "type": "Feature", "properties": { "ID": 32, "BIKE_SH": "032 Manin - Bastioni", "INDIRIZZO": "Via Manin", "STALLI": 30, "LOCALIZ": "Carreggiata", "lat": 45.477, "lon": 9.198 }, "geometry": { "type": "Point", "coordinates": [ 9.19831573104778, 45.476859878260754 ] } },
+            { "type": "Feature", "properties": { "ID": 33, "BIKE_SH": "033 Alemagna \"Triennale\"", "INDIRIZZO": "Via Alemagna", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.472, "lon": 9.173 }, "geometry": { "type": "Point", "coordinates": [ 9.173477252837696, 45.471877896296107 ] } },
+            { "type": "Feature", "properties": { "ID": 34, "BIKE_SH": "034 Cairoli", "INDIRIZZO": "L.go Cairoli", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.468, "lon": 9.182 }, "geometry": { "type": "Point", "coordinates": [ 9.182302171241927, 45.467996835812301 ] } },
+            { "type": "Feature", "properties": { "ID": 35, "BIKE_SH": "035 Torino - Carrobbio", "INDIRIZZO": "Via Torino", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.46, "lon": 9.182 }, "geometry": { "type": "Point", "coordinates": [ 9.181724001537207, 45.460434231432671 ] } },
+            { "type": "Feature", "properties": { "ID": 36, "BIKE_SH": "036 San Vito", "INDIRIZZO": "Via S.Vito", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.459, "lon": 9.184 }, "geometry": { "type": "Point", "coordinates": [ 9.183707549301703, 45.459201914318264 ] } },
+            { "type": "Feature", "properties": { "ID": 37, "BIKE_SH": "037 Italia - San Martino", "INDIRIZZO": "C.so Italia", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.453, "lon": 9.187 }, "geometry": { "type": "Point", "coordinates": [ 9.186953745066459, 45.452968017142723 ] } },
+            { "type": "Feature", "properties": { "ID": 38, "BIKE_SH": "038 XXIV Maggio", "INDIRIZZO": "P.le XXIV Maggio", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.452, "lon": 9.179 }, "geometry": { "type": "Point", "coordinates": [ 9.17915981728944, 45.452153250621471 ] } },
+            { "type": "Feature", "properties": { "ID": 39, "BIKE_SH": "039 XXV Aprile", "INDIRIZZO": "C.so Garibaldi", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.48, "lon": 9.187 }, "geometry": { "type": "Point", "coordinates": [ 9.186692785801547, 45.480227320375569 ] } },
+            { "type": "Feature", "properties": { "ID": 40, "BIKE_SH": "040 Morozzo della Rocca", "INDIRIZZO": "Via Morozzo della Rocca", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.464, "lon": 9.169 }, "geometry": { "type": "Point", "coordinates": [ 9.168913823602866, 45.463973013543026 ] } },
+            { "type": "Feature", "properties": { "ID": 41, "BIKE_SH": "041 Conciliazione", "INDIRIZZO": "P.za Conciliazione", "STALLI": 18, "LOCALIZ": "Marciapiede", "lat": 45.468, "lon": 9.167 }, "geometry": { "type": "Point", "coordinates": [ 9.16694121236403, 45.467687562640336 ] } },
+            { "type": "Feature", "properties": { "ID": 42, "BIKE_SH": "042 San Pietro all'Orto", "INDIRIZZO": "Via S.Pietro all'Orto", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.466, "lon": 9.196 }, "geometry": { "type": "Point", "coordinates": [ 9.195602928574099, 45.46608309306167 ] } },
+            { "type": "Feature", "properties": { "ID": 43, "BIKE_SH": "043 Festa del Perdono", "INDIRIZZO": "Via Festa del Perdono", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.461, "lon": 9.195 }, "geometry": { "type": "Point", "coordinates": [ 9.194705615784072, 45.461306258453526 ] } },
+            { "type": "Feature", "properties": { "ID": 44, "BIKE_SH": "044 Richini \"Univ. Statale\"", "INDIRIZZO": "L.go Richini", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.459, "lon": 9.193 }, "geometry": { "type": "Point", "coordinates": [ 9.192925000903298, 45.459359175569986 ] } },
+            { "type": "Feature", "properties": { "ID": 45, "BIKE_SH": "045 Cantù", "INDIRIZZO": "Via Cantù", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.464, "lon": 9.187 }, "geometry": { "type": "Point", "coordinates": [ 9.18662591079384, 45.464190196478434 ] } },
+            { "type": "Feature", "properties": { "ID": 46, "BIKE_SH": "046 Porta Nuova", "INDIRIZZO": "P.le Principessa Clotilde", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.48, "lon": 9.193 }, "geometry": { "type": "Point", "coordinates": [ 9.192821856511181, 45.480001889726474 ] } },
+            { "type": "Feature", "properties": { "ID": 47, "BIKE_SH": "047 Gorizia 1 \"Navigli\"", "INDIRIZZO": "V.le Gorizia", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.452, "lon": 9.177 }, "geometry": { "type": "Point", "coordinates": [ 9.177443814556314, 45.452325114777075 ] } },
+            { "type": "Feature", "properties": { "ID": 48, "BIKE_SH": "048 Gorizia 2 \"Navigli\"", "INDIRIZZO": "V.le Gorizia", "STALLI": 21, "LOCALIZ": "Marciapiede", "lat": 45.452, "lon": 9.177 }, "geometry": { "type": "Point", "coordinates": [ 9.177298751545944, 45.452340368770194 ] } },
+            { "type": "Feature", "properties": { "ID": 49, "BIKE_SH": "049 San Paolo - P.za Meda", "INDIRIZZO": "Via S.Paolo", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.466, "lon": 9.193 }, "geometry": { "type": "Point", "coordinates": [ 9.193016116405449, 45.46644656500024 ] } },
+            { "type": "Feature", "properties": { "ID": 50, "BIKE_SH": "050 Beccaria", "INDIRIZZO": "P.za Beccaria", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.464, "lon": 9.195 }, "geometry": { "type": "Point", "coordinates": [ 9.194826903820164, 45.464371456051843 ] } },
+            { "type": "Feature", "properties": { "ID": 51, "BIKE_SH": "051 Santa Maria delle Grazie", "INDIRIZZO": "Via F.lli Ruffini", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.467, "lon": 9.17 }, "geometry": { "type": "Point", "coordinates": [ 9.169786666085679, 45.466506245458604 ] } },
+            { "type": "Feature", "properties": { "ID": 52, "BIKE_SH": "052 Vittor Pisani", "INDIRIZZO": "Via Vittor Pisani", "STALLI": 24, "LOCALIZ": "Marciapiede", "lat": 45.48, "lon": 9.199 }, "geometry": { "type": "Point", "coordinates": [ 9.199137086129774, 45.48043177672551 ] } },
+            { "type": "Feature", "properties": { "ID": 53, "BIKE_SH": "053 Palestro 1", "INDIRIZZO": "Via Palestro", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.472, "lon": 9.202 }, "geometry": { "type": "Point", "coordinates": [ 9.201707938326038, 45.472338556997279 ] } },
+            { "type": "Feature", "properties": { "ID": 54, "BIKE_SH": "054 Sant'Eustorgio - P.ta Ticinese", "INDIRIZZO": "C.so P.ta Ticinese", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.455, "lon": 9.181 }, "geometry": { "type": "Point", "coordinates": [ 9.180693713597162, 45.455166840682466 ] } },
+            { "type": "Feature", "properties": { "ID": 55, "BIKE_SH": "055 Cinque Giornate", "INDIRIZZO": "P.za Cinque Giornate", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.463, "lon": 9.207 }, "geometry": { "type": "Point", "coordinates": [ 9.207056507008513, 45.462653575943499 ] } },
+            { "type": "Feature", "properties": { "ID": 56, "BIKE_SH": "056 Bastioni di P.ta Venezia", "INDIRIZZO": "V.le Città di Fiume", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.476, "lon": 9.201 }, "geometry": { "type": "Point", "coordinates": [ 9.200586719337219, 45.475910076146754 ] } },
+            { "type": "Feature", "properties": { "ID": 57, "BIKE_SH": "057 Brera", "INDIRIZZO": "Via Brera", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.472, "lon": 9.188 }, "geometry": { "type": "Point", "coordinates": [ 9.187541742893472, 45.471789835980516 ] } },
+            { "type": "Feature", "properties": { "ID": 58, "BIKE_SH": "058 Sant'Agostino", "INDIRIZZO": "Via Numa Pompilio", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.459, "lon": 9.17 }, "geometry": { "type": "Point", "coordinates": [ 9.169519984154695, 45.45891881627189 ] } },
+            { "type": "Feature", "properties": { "ID": 59, "BIKE_SH": "059 Palestro 2", "INDIRIZZO": "Via Palestro", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.472, "lon": 9.202 }, "geometry": { "type": "Point", "coordinates": [ 9.20150161966215, 45.472436204783769 ] } },
+            { "type": "Feature", "properties": { "ID": 60, "BIKE_SH": "060 Edison", "INDIRIZZO": "Via della Posta", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.464, "lon": 9.184 }, "geometry": { "type": "Point", "coordinates": [ 9.183544120261596, 45.464330623109426 ] } },
+            { "type": "Feature", "properties": { "ID": 61, "BIKE_SH": "061 Augusto", "INDIRIZZO": "L.go Augusto", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.463, "lon": 9.198 }, "geometry": { "type": "Point", "coordinates": [ 9.198160388642455, 45.463429155516152 ] } },
+            { "type": "Feature", "properties": { "ID": 62, "BIKE_SH": "062 Treves", "INDIRIZZO": "L.go Treves", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.475, "lon": 9.187 }, "geometry": { "type": "Point", "coordinates": [ 9.186787851252022, 45.475045006193696 ] } }
+            ]
+            }
+            ];
+    
+
+    function forEachFeature(feature, layer) {
+        var popupContent = [];
+
+    // render properties
+
+        for (var key in feature.properties) {
+
+            popupContent.push(feature.properties[key]);
+            }
+            // render coordinates
+            if(feature.geometry.type === "Point")
+                {
+                    popupContent.push(feature.geometry.coordinates[1].toFixed(3));
+                    popupContent.push(feature.geometry.coordinates[0].toFixed(3));
+                }
+            layer.bindPopup('<center><strong>' + popupContent[1] + "</strong></center>" +
+                            '<center><strong>' + popupContent[2] + "</strong></center><br/>Other Information:<br/>" +
+                            '<strong>Stalls: </strong>' + popupContent[3] + "<br/>" +
+                            '<strong>Location: </strong>' + popupContent[4] + "<br/>" +
+                            '<strong>Latitude: </strong>' + popupContent[7] + "<br/>" +
+                            '<strong>Longitude: </strong>' + popupContent[8] + "<br/>" +
+                            "<br/>" +
+                            '{% if current_user.is_authenticated %}' +
+                            '<a href="{{ url_for("main.about") }}" class="btn btn-success active" role="button">Statistic</a>',
+                            '{% else %}' +
+                            '<a href="{{ url_for("users.login") }}" class="btn btn-success active" role="button">Login to see statistic</a>',
+                            '{% endif %}');
+            };
+
+    var geojsonMarkerOptions = {
+        radius: 5,
+        fillColor: "#ff7800",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+
+    var stations = L.geoJSON(url, {
+        onEachFeature: forEachFeature,
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, geojsonMarkerOptions);
+        }
         });
 
+    var map = L.map('mapid',{
+            center: [home.lat, home.lng],
+            zoom: home.zoom,
+            layers: [streets, stations]
+        });
 
+   
+            
+    var baseMaps = {
+        "Open Street Map": streets,
+        "Grayscale": grayscale,
+        "Satellite": satellite
+    };
+            
+    var overlayMaps = {
+        "Stations": stations
+    };
+
+    L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
+    // Zoom Home function
+    L.easyButton('fa-home fa-lg',function(btn,map){
+            map.setView([home.lat, home.lng], home.zoom);
+            },'Zoom To Home').addTo(map);
     
-    var tile_layer_c7dbc50bdbc146968ee33815e1cef517 = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        {
-        "attribution": null,
-        "detectRetina": false,
-        "maxNativeZoom": 18,
-        "maxZoom": 18,
-        "minZoom": 0,
-        "noWrap": false,
-        "opacity": 1,
-        "subdomains": "abc",
-        "tms": false
-}).addTo(map_882b453ef1ef408490bf3f3b84c5e28f);
-    
-        var marker_8afc404317224360abf90f18af3e71bf = L.marker(
-            [42.3636, -71.0995],
-            {
-                icon: new L.Icon.Default(),
-                }
-            ).addTo(map_882b453ef1ef408490bf3f3b84c5e28f);
-        
-    
-            var popup_17b8df6d9cdd4f7fa4b343930d2b20de = L.popup({maxWidth: '100%'
-            
-            });
+     //GPS location
 
-            
-                var html_15dc437ed40343b39549db1dc56e472f = $(`<div id="html_15dc437ed40343b39549db1dc56e472f" style="width: 100.0%; height: 100.0%;"><strong>Location One</strong></div>`)[0];
-                popup_17b8df6d9cdd4f7fa4b343930d2b20de.setContent(html_15dc437ed40343b39549db1dc56e472f);
-            
+    function onLocationFound(e) {
+        var radius = e.accuracy / 2;
 
-            marker_8afc404317224360abf90f18af3e71bf.bindPopup(popup_17b8df6d9cdd4f7fa4b343930d2b20de)
-            ;
+        L.marker(e.latlng).addTo(map)
+            .bindPopup("You are within " + radius + " m" ).openPopup();
 
-            
-        
-    
-        marker_8afc404317224360abf90f18af3e71bf.bindTooltip(
-            `<div>`
-            + `Click For More Info` + `</div>`,
-            {"sticky": true}
-        );
-        
-    
-        var marker_5f1c37b36e1d40fdacf08fee3a692075 = L.marker(
-            [42.3336, -71.1095],
-            {
-                icon: new L.Icon.Default(),
-                }
-            ).addTo(map_882b453ef1ef408490bf3f3b84c5e28f);
-        
-    
+        // L.circle(e.latlng, radius).addTo(map);
+    }
 
-                var icon_88675b73c04344fab28c0775735122c1 = L.AwesomeMarkers.icon({
-                    icon: 'cloud',
-                    iconColor: 'white',
-                    markerColor: 'blue',
-                    prefix: 'glyphicon',
-                    extraClasses: 'fa-rotate-0'
-                    });
-                marker_5f1c37b36e1d40fdacf08fee3a692075.setIcon(icon_88675b73c04344fab28c0775735122c1);
-            
-    
-            var popup_de94175daa214792bbd397964a709701 = L.popup({maxWidth: '100%'
-            
-            });
+    map.on('locationfound', onLocationFound);
 
-            
-                var html_00097ebb539340ccb1ec12a00b699029 = $(`<div id="html_00097ebb539340ccb1ec12a00b699029" style="width: 100.0%; height: 100.0%;"><strong>Location Two</strong></div>`)[0];
-                popup_de94175daa214792bbd397964a709701.setContent(html_00097ebb539340ccb1ec12a00b699029);
-            
+        function onLocationError(e) {
+        alert(e.message);
+    }
 
-            marker_5f1c37b36e1d40fdacf08fee3a692075.bindPopup(popup_de94175daa214792bbd397964a709701)
-            ;
+    map.on('locationerror', onLocationError);
 
-            
-        
-    
-        marker_5f1c37b36e1d40fdacf08fee3a692075.bindTooltip(
-            `<div>`
-            + `Click For More Info` + `</div>`,
-            {"sticky": true}
-        );
-        
-    
-        var marker_85db7ce13fc34e24955ccc98e904c12d = L.marker(
-            [42.37712, -71.0624],
-            {
-                icon: new L.Icon.Default(),
-                }
-            ).addTo(map_882b453ef1ef408490bf3f3b84c5e28f);
-        
-    
+    L.easyButton('fa-crosshairs fa-lg',function(btn,map){
+        map.locate({setView: true, maxZoom: 13});
+            },'My position').addTo(map);
 
-                var icon_667a046252f547bdb8c88135c03ebd58 = L.AwesomeMarkers.icon({
-                    icon: 'info-sign',
-                    iconColor: 'white',
-                    markerColor: 'purple',
-                    prefix: 'glyphicon',
-                    extraClasses: 'fa-rotate-0'
-                    });
-                marker_85db7ce13fc34e24955ccc98e904c12d.setIcon(icon_667a046252f547bdb8c88135c03ebd58);
-            
-    
-            var popup_ea17d3bf7d934c06b92c4e3b6e1a82bb = L.popup({maxWidth: '100%'
-            
-            });
+   
 
-            
-                var html_4ab0f60b8d1f42b5aa5acc5b257e4a7c = $(`<div id="html_4ab0f60b8d1f42b5aa5acc5b257e4a7c" style="width: 100.0%; height: 100.0%;"><strong>Location Three</strong></div>`)[0];
-                popup_ea17d3bf7d934c06b92c4e3b6e1a82bb.setContent(html_4ab0f60b8d1f42b5aa5acc5b257e4a7c);
-            
-
-            marker_85db7ce13fc34e24955ccc98e904c12d.bindPopup(popup_ea17d3bf7d934c06b92c4e3b6e1a82bb)
-            ;
-
-            
-        
-    
-        marker_85db7ce13fc34e24955ccc98e904c12d.bindTooltip(
-            `<div>`
-            + `Click For More Info` + `</div>`,
-            {"sticky": true}
-        );
-        
-    
-        var marker_ea3f340c2c504cb08465700a4efda5c4 = L.marker(
-            [42.37415, -71.12241],
-            {
-                icon: new L.Icon.Default(),
-                }
-            ).addTo(map_882b453ef1ef408490bf3f3b84c5e28f);
-        
-    
-
-                var icon_1e87809e7e9e4bb6bdef8803ed7d7531 = L.AwesomeMarkers.icon({
-                    icon: 'leaf',
-                    iconColor: 'white',
-                    markerColor: 'green',
-                    prefix: 'glyphicon',
-                    extraClasses: 'fa-rotate-0'
-                    });
-                marker_ea3f340c2c504cb08465700a4efda5c4.setIcon(icon_1e87809e7e9e4bb6bdef8803ed7d7531);
-            
-    
-            var popup_7647a440919d4ddc8faa59d000e533ad = L.popup({maxWidth: '100%'
-            
-            });
-
-            
-                var html_17f93fda0f7b480497104225a3a8ad05 = $(`<div id="html_17f93fda0f7b480497104225a3a8ad05" style="width: 100.0%; height: 100.0%;"><strong>Location Four</strong></div>`)[0];
-                popup_7647a440919d4ddc8faa59d000e533ad.setContent(html_17f93fda0f7b480497104225a3a8ad05);
-            
-
-            marker_ea3f340c2c504cb08465700a4efda5c4.bindPopup(popup_7647a440919d4ddc8faa59d000e533ad)
-            ;
-
-            
-        
-    
-        marker_ea3f340c2c504cb08465700a4efda5c4.bindTooltip(
-            `<div>`
-            + `Click For More Info` + `</div>`,
-            {"sticky": true}
-        );
-        
-    
-        var marker_c3fb8b317d104d0e9cd4e53c8b59996c = L.marker(
-            [42.37514, -71.03245],
-            {
-                icon: new L.Icon.Default(),
-                }
-            ).addTo(map_882b453ef1ef408490bf3f3b84c5e28f);
-        
-    
-
-                var custom_icon_b5359a2536394173ae0fe3434da5d452 = L.icon({
-                    iconUrl: 'data:image/jpg;base64,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',
-                    iconSize: [50,50],
-                    
-
-                    
-                    
-                    
-
-                    
-                    });
-                marker_c3fb8b317d104d0e9cd4e53c8b59996c.setIcon(custom_icon_b5359a2536394173ae0fe3434da5d452);
-            
-    
-            var popup_f62fa869c5ce46d3b50020dfcf7e2caf = L.popup({maxWidth: '100%'
-            
-            });
-
-            
-                var html_39465a8daeea4fe6a7fb805a5313f434 = $(`<div id="html_39465a8daeea4fe6a7fb805a5313f434" style="width: 100.0%; height: 100.0%;"><strong>Location Five</strong></div>`)[0];
-                popup_f62fa869c5ce46d3b50020dfcf7e2caf.setContent(html_39465a8daeea4fe6a7fb805a5313f434);
-            
-
-            marker_c3fb8b317d104d0e9cd4e53c8b59996c.bindPopup(popup_f62fa869c5ce46d3b50020dfcf7e2caf)
-            ;
-
-            
-        
-    
-        marker_c3fb8b317d104d0e9cd4e53c8b59996c.bindTooltip(
-            `<div>`
-            + `Click For More Info` + `</div>`,
-            {"sticky": true}
-        );
-        
-    
-        var marker_35d95df7e29b47699f1fa530f96a9970 = L.marker(
-            [42.31514, -71.07245],
-            {
-                icon: new L.Icon.Default(),
-                }
-            ).addTo(map_882b453ef1ef408490bf3f3b84c5e28f);
-        
-    function vega_parse(spec, div) {
-            vg.parse.spec(spec, function(chart) { chart({el:div}).update(); });}
-    
-            var popup_8ac53aab785f4b8eb68d3a372aaa886e = L.popup({maxWidth: '450'
-            
-            });
-
-            
-                var vega_c2ad2f70b65840d2b32d4ebb2b3b92fb = $(`             <div id="vega_c2ad2f70b65840d2b32d4ebb2b3b92fb"></div>             `)[0];
-                popup_8ac53aab785f4b8eb68d3a372aaa886e.setContent(vega_c2ad2f70b65840d2b32d4ebb2b3b92fb);
-            
-
-            marker_35d95df7e29b47699f1fa530f96a9970.bindPopup(popup_8ac53aab785f4b8eb68d3a372aaa886e)
-            ;
-
-            
-                
-            vega_parse({"axes": [{"scale": "x", "title": "Time", "type": "x"}, {"scale": "y", "title": "Dominant Wave Period (s)", "type": "y"}], "data": [{"name": "table", "values": [{"col": "dominant_wave_period (s)", "idx": 1366257000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366260600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366264200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366267800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366271400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366275000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366278600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366282200000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366285800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366289400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366293000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366300200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1366303800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1366307400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1366311000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1366314600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366318200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366321800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366325400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366329000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366332600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1366336200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1366339800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366343400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366347000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366350600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366354200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366357800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366361400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366365000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366368600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366372200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366375800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366379400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366383000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366386600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366390200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366393800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366397400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366401000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366404600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366408200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366411800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366415400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366419000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366422600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366426200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366429800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366433400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366437000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366440600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366444200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366447800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366451400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366455000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366458600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366462200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366465800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366469400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366473000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366476600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366480200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366483800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366487400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366491000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366494600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366498200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366501800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366505400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366509000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366512600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366516200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366519800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366523400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366527000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366530600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366534200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366537800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366541400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366545000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366548600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366552200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366559400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366563000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366566600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366570200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366573800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366577400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366581000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366584600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366588200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366591800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366595400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366599000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366602600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366606200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366609800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366613400000, "val": 5.0}, {"col": "dominant_wave_period (s)", "idx": 1366617000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366620600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366624200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366627800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366631400000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366635000000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366638600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366642200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366645800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366649400000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366653000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366656600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366660200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366663800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1366667400000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366671000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366674600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366678200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1366681800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366685400000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366689000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366692600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366696200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1366699800000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1366703400000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1366707000000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1366710600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1366714200000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1366717800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1366721400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366725000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1366728600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366732200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366735800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366739400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366743000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1366746600000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1366750200000, "val": 12.0}, {"col": "dominant_wave_period (s)", "idx": 1366753800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366757400000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366761000000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366764600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366768200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366771800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366775400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366779000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366782600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366786200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366789800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366793400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366797000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366800600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366804200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366807800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366811400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366818600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366822200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366829400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366833000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366836600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366840200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366843800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366847400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366851000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366854600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366858200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366861800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1366865400000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366869000000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366872600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1366876200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1366879800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366883400000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366887000000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1366890600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1366894200000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366897800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366901400000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366905000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366908600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366912200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366915800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366919400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366923000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366926600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366930200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366933800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1366937400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366941000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366944600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366948200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366951800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366955400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366959000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366962600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366966200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366969800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366973400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366977000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1366980600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366984200000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366987800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366991400000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1366995000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1366998600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367002200000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367005800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367009400000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367013000000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367016600000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1367020200000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367023800000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367027400000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1367031000000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367034600000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367038200000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1367041800000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367045400000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367049000000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1367052600000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1367056200000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1367059800000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367063400000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1367067000000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1367070600000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367077800000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367081400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367085000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367088600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367092200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367095800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367099400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367103000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367106600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367110200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367113800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367117400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367121000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367124600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367128200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367131800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367135400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367139000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367142600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367146200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367149800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367153400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367157000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367160600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367164200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367167800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367171400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367175000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367178600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367182200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367185800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367189400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367193000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367196600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367200200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367203800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367207400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367211000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367214600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367218200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367221800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367225400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367229000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367232600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367236200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367239800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367243400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367247000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367250600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367254200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367257800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367261400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367265000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367268600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367272200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367275800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367279400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367283000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367286600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367290200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367293800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367297400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367301000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367304600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367308200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367311800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367315400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367319000000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367322600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367326200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367329800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367337000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367340600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367344200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367347800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367351400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367355000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367358600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367362200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367365800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367369400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367373000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367376600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367380200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367383800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367387400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367391000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367394600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367398200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367401800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367405400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367409000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367412600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367416200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367419800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367423400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367427000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367430600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367434200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367437800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367441400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367445000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367448600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367452200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367455800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367459400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367463000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367466600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367470200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367473800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367477400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367481000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367484600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367488200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367491800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367495400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367499000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367502600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367506200000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1367509800000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1367513400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367517000000, "val": 17.0}, {"col": "dominant_wave_period (s)", "idx": 1367520600000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1367524200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367527800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367531400000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367535000000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367538600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367542200000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367545800000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1367549400000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1367553000000, "val": 5.0}, {"col": "dominant_wave_period (s)", "idx": 1367556600000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1367560200000, "val": 5.0}, {"col": "dominant_wave_period (s)", "idx": 1367563800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367571000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367574600000, "val": 5.0}, {"col": "dominant_wave_period (s)", "idx": 1367578200000, "val": 5.0}, {"col": "dominant_wave_period (s)", "idx": 1367581800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367585400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367589000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367592600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367596200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367599800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367603400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367607000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367610600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367614200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367617800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367621400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367625000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367628600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367632200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367635800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367639400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367643000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367646600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367650200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367653800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367657400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367661000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367664600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367668200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367671800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367675400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367679000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367682600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367686200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367689800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367693400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367697000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367700600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367704200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367707800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367711400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367715000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367718600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367722200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367725800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367729400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367733000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367736600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367740200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367743800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367747400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367751000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367754600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367758200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367761800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367765400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367769000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367772600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367776200000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367779800000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1367783400000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367787000000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1367790600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367794200000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1367797800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367801400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367805000000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1367808600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367812200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367815800000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1367819400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367823000000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1367826600000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1367830200000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367833800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367837400000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367841000000, "val": 12.0}, {"col": "dominant_wave_period (s)", "idx": 1367844600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367848200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367851800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367855400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367859000000, "val": 12.0}, {"col": "dominant_wave_period (s)", "idx": 1367862600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367866200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1367869800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367873400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367877000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367880600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367884200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367887800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367891400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367895000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367898600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367902200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367905800000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367909400000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367913000000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367916600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1367920200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367923800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367927400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1367931000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1367934600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367938200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367941800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367945400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367949000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367952600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367956200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367959800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367963400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367967000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367970600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367974200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367977800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367981400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367985000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367988600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367992200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1367995800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1367999400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368003000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368006600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368010200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368013800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368017400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368021000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368024600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368028200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368031800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368035400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368039000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368042600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368046200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368049800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368053400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368057000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368060600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368064200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368067800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368071400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368075000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368078600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368082200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368085800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368089400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368093000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368096600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368100200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368103800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368107400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368111000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368114600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368118200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368121800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368125400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368129000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368132600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368136200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368139800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368143400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368147000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368150600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368154200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368157800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368161400000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368165000000, "val": 3.0}, {"col": "dominant_wave_period (s)", "idx": 1368168600000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1368172200000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1368175800000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1368179400000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1368183000000, "val": 3.0}, {"col": "dominant_wave_period (s)", "idx": 1368186600000, "val": 3.0}, {"col": "dominant_wave_period (s)", "idx": 1368190200000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368193800000, "val": 4.0}, {"col": "dominant_wave_period (s)", "idx": 1368197400000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1368201000000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368204600000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368208200000, "val": 5.0}, {"col": "dominant_wave_period (s)", "idx": 1368211800000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368215400000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368219000000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368222600000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368226200000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368229800000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1368233400000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368237000000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368240600000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368244200000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1368247800000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1368251400000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368255000000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368258600000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1368262200000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368265800000, "val": 14.0}, {"col": "dominant_wave_period (s)", "idx": 1368269400000, "val": 13.0}, {"col": "dominant_wave_period (s)", "idx": 1368273000000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1368276600000, "val": 16.0}, {"col": "dominant_wave_period (s)", "idx": 1368280200000, "val": 12.0}, {"col": "dominant_wave_period (s)", "idx": 1368283800000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1368287400000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368291000000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368294600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368298200000, "val": 15.0}, {"col": "dominant_wave_period (s)", "idx": 1368301800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368305400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368309000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368312600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368316200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368319800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368323400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368327000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368330600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368334200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368337800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368341400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368345000000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368348600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368352200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368355800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368359400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368363000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368366600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368370200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368373800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368377400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368381000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368384600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368388200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368391800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368395400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368399000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368402600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368406200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368409800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368413400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368417000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368420600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368424200000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368427800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368431400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368435000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368438600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368442200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368445800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368449400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368453000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368456600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368460200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368463800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368467400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368471000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368474600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368478200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368481800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368485400000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368489000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368492600000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1368496200000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1368499800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368503400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368507000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368510600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368514200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368517800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368521400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368525000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368528600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368532200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368535800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368539400000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368543000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368546600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368550200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368553800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368557400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368561000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368564600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368568200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368571800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368575400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368579000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368582600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368586200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368589800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368593400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368597000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368600600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368604200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368607800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368611400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368615000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368618600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368622200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368625800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368629400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368633000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368636600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368640200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368643800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368647400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368651000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368654600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368658200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368665400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368669000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368672600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368676200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368679800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368683400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368687000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368690600000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368694200000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1368697800000, "val": 7.0}, {"col": "dominant_wave_period (s)", "idx": 1368701400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368705000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368708600000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368712200000, "val": 6.0}, {"col": "dominant_wave_period (s)", "idx": 1368715800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368719400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368723000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368726600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368730200000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368733800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368737400000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368741000000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368744600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368748200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368751800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368755400000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368759000000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368762600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368766200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368769800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368773400000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368777000000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368780600000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368784200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368787800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368791400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368795000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368798600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368802200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368805800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368809400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368813000000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368816600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368820200000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368823800000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368827400000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368831000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368834600000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368838200000, "val": 11.0}, {"col": "dominant_wave_period (s)", "idx": 1368841800000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368845400000, "val": 10.0}, {"col": "dominant_wave_period (s)", "idx": 1368849000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368852600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368856200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368859800000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368863400000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368867000000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368870600000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368874200000, "val": 9.0}, {"col": "dominant_wave_period (s)", "idx": 1368877800000, "val": 8.0}, {"col": "dominant_wave_period (s)", "idx": 1368881400000, "val": 9.0}]}], "height": 200, "legends": [], "marks": [{"from": {"data": "table", "transform": [{"keys": ["data.col"], "type": "facet"}]}, "marks": [{"properties": {"enter": {"stroke": {"field": "data.col", "scale": "color"}, "strokeWidth": {"value": 2}, "x": {"field": "data.idx", "scale": "x"}, "y": {"field": "data.val", "scale": "y"}}}, "type": "line"}], "type": "group"}], "padding": "auto", "scales": [{"domain": {"data": "table", "field": "data.idx"}, "name": "x", "range": "width", "type": "time"}, {"domain": {"data": "table", "field": "data.val"}, "name": "y", "nice": true, "range": "height"}, {"domain": {"data": "table", "field": "data.col"}, "name": "color", "range": "category20", "type": "ordinal"}], "width": 400},vega_c2ad2f70b65840d2b32d4ebb2b3b92fb);
-            
-            
-        
-    
-            var circle_marker_d9065481d42a42b28247635513dc0cc4 = L.circleMarker(
-                [42.46647, -70.94211],
-                {
-  "bubblingMouseEvents": true,
-  "color": "#428bca",
-  "dashArray": null,
-  "dashOffset": null,
-  "fill": true,
-  "fillColor": "#428bca",
-  "fillOpacity": 0.2,
-  "fillRule": "evenodd",
-  "lineCap": "round",
-  "lineJoin": "round",
-  "opacity": 1.0,
-  "radius": 50,
-  "stroke": true,
-  "weight": 3
-}
-                )
-                .addTo(map_882b453ef1ef408490bf3f3b84c5e28f);
-            
-    
-            var popup_bfb49525066145198881182b6658636c = L.popup({maxWidth: '100%'
-            
-            });
-
-            
-                var html_5cbdb678c1cb4e3ab862bcb12abc026a = $(`<div id="html_5cbdb678c1cb4e3ab862bcb12abc026a" style="width: 100.0%; height: 100.0%;">My Birthplace</div>`)[0];
-                popup_bfb49525066145198881182b6658636c.setContent(html_5cbdb678c1cb4e3ab862bcb12abc026a);
-            
-
-            circle_marker_d9065481d42a42b28247635513dc0cc4.bindPopup(popup_bfb49525066145198881182b6658636c)
-            ;
-
-            
-        
-    
-        var geo_json_2e798a7ba75a42df84ee69a3d9d10e3b = L.geoJson(
-            {"features": [{"geometry": {"coordinates": [[-71.10300064086914, 42.35404065289404], [-71.09742164611816, 42.35556291928673], [-71.0910701751709, 42.357338850142156], [-71.08600616455078, 42.359368423951025], [-71.08077049255371, 42.3609539828782], [-71.07905387878418, 42.36399814386249], [-71.07587814331055, 42.36773972300433], [-71.0734748840332, 42.37236882604973], [-71.07956886291504, 42.37446132230829], [-71.08686447143553, 42.37509539831962], [-71.1009407043457, 42.37953375114589], [-71.10712051391602, 42.381055399900994], [-71.11063957214355, 42.38314760672845], [-71.11467361450195, 42.38523974383771], [-71.11879348754883, 42.38701483580215], [-71.12265586853027, 42.38644427600166], [-71.12608909606934, 42.381182202299385], [-71.1276340484619, 42.3757294679291], [-71.12565994262694, 42.37357360513729], [-71.12402915954588, 42.37078355519824], [-71.1188793182373, 42.36957872259166], [-71.11621856689453, 42.365900669578544], [-71.11630439758301, 42.361778457708425], [-71.11424446105957, 42.356831446447515], [-71.11252784729002, 42.354992073710456], [-71.1078929901123, 42.35404065289404], [-71.10368728637695, 42.3537235094212]], "type": "LineString"}, "properties": {"highlight": {}, "style": {}}, "type": "Feature"}], "type": "FeatureCollection"},
-            {
-            }
-        ).addTo(map_882b453ef1ef408490bf3f3b84c5e28f );
-        geo_json_2e798a7ba75a42df84ee69a3d9d10e3b.setStyle(function(feature) {return feature.properties.style;});
         
 </script>
+{% endblock content %}

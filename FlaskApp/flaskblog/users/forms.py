@@ -9,11 +9,13 @@ from flaskblog.models import User
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
                            validators=[DataRequired(), Length(min=2, max=20)])
-    email = StringField('Email',
+    email = StringField('Email',    
                         validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
+    check_code = StringField('PIN Code', 
+                            validators=[DataRequired(), Length(8)])
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
@@ -25,6 +27,7 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
+    
 
 
 class LoginForm(FlaskForm):
