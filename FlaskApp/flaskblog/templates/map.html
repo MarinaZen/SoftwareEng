@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div id="mapid"></div>
+    <div class="row">
+        <div class="col-md-3">ciao ciao</div>
+        <div id="mapid" class="col-md-9"></div>
+    </div>
 
 <script type="text/javascript" >
 
@@ -199,15 +202,21 @@
 
     //Routing button
 
-    L.Routing.control({
-    waypoints: [
-        L.latLng(57.74, 11.94),
-        L.latLng(57.6792, 11.949)
-        ],
+    var routing = L.Routing.control({
+    //waypoints: [
+        // L.latLng(57.74, 11.94),
+        // L.latLng(57.6792, 11.949)
+        //],
         routeWhileDragging: true,
+        reverseWaypoints: true,
+        showAlternatives: true,
         router: L.Routing.mapbox(accessToken),
         geocoder: L.Control.Geocoder.nominatim()
-    }).addTo(map);
+    });
+   
+    routing.addTo(map);
+
+    L.Routing.errorControl(routing).addTo(map);
 
     //popup for asking directions
 
@@ -224,21 +233,26 @@ map.on('click', function(e) {
         startBtn = createButton('Start from this location', container),
         destBtn = createButton('Go to this location', container);
 
+    var removeContainer = L.DomUtil.create('div'),
+        removeBtn = createButton('Remove waypoint',removeContainer);
+
     L.popup()
         .setContent(container)
         .setLatLng(e.latlng)
         .openOn(map);
-});
-//subs waypoints
+
+    //subs waypoints
     L.DomEvent.on(startBtn, 'click', function() {
-            control.spliceWaypoints(0, 1, e.latlng);
+        routing.spliceWaypoints(0, 1, e.latlng);
             map.closePopup();
         });
 
     L.DomEvent.on(destBtn, 'click', function() {
-        control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
+        routing.spliceWaypoints(routing.getWaypoints().length - 1, 1, e.latlng);
         map.closePopup();
     });
+});
+
 
    
 

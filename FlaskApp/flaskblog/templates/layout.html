@@ -20,7 +20,7 @@
     <!-- geocoding css -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
      <!-- routing machine css -->
-     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='routing_machine/leaflet-routing-machine.css') }}">
 
     <!-- leaflet js -->
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
@@ -30,8 +30,8 @@
     <!-- geocoding js -->
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
-    <!-- routing machinejs -->
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <!-- routing machine js -->
+    <script src="{{ url_for('static', filename='routing_machine/leaflet-routing-machine.js') }}"></script>
     <!-- leaflet easy button -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
     <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
