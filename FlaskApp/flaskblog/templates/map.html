@@ -21,7 +21,7 @@
                     }),
         streets = L.tileLayer(mapboxUrl, {
                     id: 'mapbox.streets', 
-                    attribution: '', 
+                    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', 
                     maxZoom: 20, 
                     accessToken: accessToken
                     }),
@@ -103,11 +103,12 @@
             }
             ];
     
+    //PopUp points
 
     function forEachFeature(feature, layer) {
         var popupContent = [];
 
-    // render properties
+        // render properties
 
         for (var key in feature.properties) {
 
@@ -133,21 +134,18 @@
                             '{% endif %}');
             };
 
-    var geojsonMarkerOptions = {
-        radius: 5,
-        fillColor: "#ff7800",
-        color: "#000",
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-    };
 
     var stations = L.geoJSON(url, {
         onEachFeature: forEachFeature,
         pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, geojsonMarkerOptions);
+            return L.marker(latlng, {
+            icon: new L.AwesomeNumberMarkers({
+            number: feature.properties.ID, 
+            markerColor: 'green'
+            })
+        })
         }
-        });
+    });
 
     var map = L.map('mapid',{
             center: [home.lat, home.lng],
@@ -177,6 +175,7 @@
     
      //GPS location
 
+
     function onLocationFound(e) {
         var radius = e.accuracy / 2;
 
@@ -197,6 +196,49 @@
     L.easyButton('fa-crosshairs fa-lg',function(btn,map){
         map.locate({setView: true, maxZoom: 13});
             },'My position').addTo(map);
+
+    //Routing button
+
+    L.Routing.control({
+    waypoints: [
+        L.latLng(57.74, 11.94),
+        L.latLng(57.6792, 11.949)
+        ],
+        routeWhileDragging: true,
+        router: L.Routing.mapbox(accessToken),
+        geocoder: L.Control.Geocoder.nominatim()
+    }).addTo(map);
+
+    //popup for asking directions
+
+    function createButton(label, container) {
+    var btn = L.DomUtil.create('button', '', container);
+    btn.setAttribute('type', 'button');
+    btn.innerHTML = label;
+    return btn;
+}
+
+
+map.on('click', function(e) {
+    var container = L.DomUtil.create('div'),
+        startBtn = createButton('Start from this location', container),
+        destBtn = createButton('Go to this location', container);
+
+    L.popup()
+        .setContent(container)
+        .setLatLng(e.latlng)
+        .openOn(map);
+});
+//subs waypoints
+    L.DomEvent.on(startBtn, 'click', function() {
+            control.spliceWaypoints(0, 1, e.latlng);
+            map.closePopup();
+        });
+
+    L.DomEvent.on(destBtn, 'click', function() {
+        control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
+        map.closePopup();
+    });
 
    
 
