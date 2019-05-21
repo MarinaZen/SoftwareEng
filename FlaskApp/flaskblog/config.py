@@ -9,3 +9,6 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'se4g.assistance'
     MAIL_PASSWORD = '1234se4g'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+       
+
