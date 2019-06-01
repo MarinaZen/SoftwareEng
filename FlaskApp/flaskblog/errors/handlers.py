@@ -1,3 +1,4 @@
+#managing of different kinds of server response errors
 from flask import Blueprint, render_template
 
 errors = Blueprint('errors', __name__)

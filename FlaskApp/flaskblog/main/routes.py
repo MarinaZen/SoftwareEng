@@ -1,9 +1,9 @@
 from flask import render_template, request, Blueprint
 from flaskblog.models import Post
-
+#initialization of main module as a blueprint
 main = Blueprint('main', __name__)
 
-
+#creation of main web pages routes
 @main.route("/")
 @main.route("/about")
 def about():

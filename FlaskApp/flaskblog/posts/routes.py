@@ -4,10 +4,10 @@ from flask_login import current_user, login_required
 from flaskblog import db
 from flaskblog.models import Post
 from flaskblog.posts.forms import PostForm
-
+#initialization of posts module as a blueprint
 posts = Blueprint('posts', __name__)
 
-
+#decorator for posts creation
 @posts.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
@@ -21,13 +21,13 @@ def new_post():
     return render_template('create_post.html', title='New Post',
                            form=form, legend='New Post')
 
-
+#routes and functions needed for the creation of a post
 @posts.route("/post/<int:post_id>")
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post)
 
-
+#updating a user's post
 @posts.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
 @login_required
 def update_post(post_id):
@@ -47,7 +47,7 @@ def update_post(post_id):
     return render_template('create_post.html', title='Update Post',
                            form=form, legend='Update Post')
 
-
+#deleting a user's post
 @posts.route("/post/<int:post_id>/delete", methods=['POST'])
 @login_required
 def delete_post(post_id):

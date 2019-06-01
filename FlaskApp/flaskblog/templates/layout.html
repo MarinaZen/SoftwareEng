@@ -1,3 +1,4 @@
+<!-- main base template which has common features for all other templates-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,7 +52,7 @@
     <!-- numbered marker JS -->
     <script src="{{ url_for('static', filename='awesome-numbered-marker/leaflet_awesome_number_markers.js') }}"></script>
 
-    <!-- mine CSS -->
+    <!-- main CSS -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
     
     {% if title %}

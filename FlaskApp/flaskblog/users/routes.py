@@ -8,22 +8,25 @@ from flaskblog.users.utils import save_picture, send_reset_email
 
 users = Blueprint('users', __name__)
 
-
+#route for the registration that connects to the specific html template
 @users.route("/register", methods=['GET', 'POST'])
 def register():
+    #is user already authenticated, page goes to main
     if current_user.is_authenticated:
         return redirect(url_for('main.about'))
     form = RegistrationForm()
+    #takes the values from the registration form and commits in the database
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
+        #redirects to login page
         return redirect(url_for('users.login'))
     return render_template('register.html', title='Register', form=form)
 
-
+#route for login
 @users.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -39,13 +42,13 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
-
+#route for the logout
 @users.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('main.blog'))
 
-
+#route to go to user's personal account and eventually do modifications
 @users.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():

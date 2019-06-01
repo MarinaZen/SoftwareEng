@@ -5,7 +5,7 @@ from flask import url_for, current_app
 from flask_mail import Message
 from flaskblog import mail
 
-
+#definition of a function that saves the profile picture of the user in a specific path
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
@@ -19,7 +19,7 @@ def save_picture(form_picture):
 
     return picture_fn
 
-
+#definition of a function that allows to send an email used to reset the user's password
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password Reset Request',
