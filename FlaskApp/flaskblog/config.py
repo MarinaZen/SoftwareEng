@@ -1,3 +1,4 @@
+#configuration parameters
 import os
 
 

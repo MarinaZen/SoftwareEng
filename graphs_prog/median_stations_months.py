@@ -9,7 +9,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import row
 import math
 
-bike = pd.read_csv(r'C:\Users\lawfr\Desktop\graphs_prog\data\bike.csv')
+bike = pd.read_csv(r'/Users/marta/Desktop/Software/Project/SoftwareEng/graphs_prog/data/bike.csv')
 d = pd.to_datetime(bike['time']).dt.month
 bike['time'] = d
 bike.rename(columns={'time':'month'}, inplace=True)
