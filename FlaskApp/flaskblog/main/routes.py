@@ -1,7 +1,10 @@
 from flask import render_template, request, Blueprint
 from flaskblog.models import Post
+from flaskblog.connection import bikeJson, stations
+
 
 main = Blueprint('main', __name__)
+
 
 
 @main.route("/")
@@ -17,4 +20,4 @@ def blog():
 
 @main.route("/map")
 def map():
-    return render_template('map.html', title='Map')
+    return render_template('map.html', title='Map', bikeJson = bikeJson, stations=stations)
