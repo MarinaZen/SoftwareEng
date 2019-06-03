@@ -6,6 +6,8 @@ from flaskblog.users.forms import (RegistrationForm, LoginForm, UpdateAccountFor
                                    RequestResetForm, ResetPasswordForm)
 from flaskblog.users.utils import save_picture, send_reset_email
 
+
+
 users = Blueprint('users', __name__)
 
 #route for the registration that connects to the specific html template
@@ -19,6 +21,7 @@ def register():
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+    
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')

@@ -8,7 +8,11 @@ from bokeh.tile_providers import get_provider, Vendors #bokeh version 1.1
 from bokeh.io import curdoc
 from bokeh.layouts import row
 
+<<<<<<< HEAD
+bike = pd.read_csv(r'/home/marina/Desktop/Laboratorio/graphs_prog/data/bike.csv')
+=======
 bike = pd.read_csv(r'/Users/marta/Desktop/Software/Project/SoftwareEng/graphs_prog/data/bike.csv')
+>>>>>>> e1c914fc9bfad7dd39aea6a70d5934a475e21369
 d = pd.to_datetime(bike['time']).dt.date
 bike['time'] = d
 bike.rename(columns={'time':'date'}, inplace=True)
