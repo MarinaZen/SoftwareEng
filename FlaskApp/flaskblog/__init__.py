@@ -7,10 +7,9 @@ from flask_mail import Mail
 from flaskblog.config import Config
 
 
-<<<<<<< HEAD
-=======
+
 #function's initialization
->>>>>>> e1c914fc9bfad7dd39aea6a70d5934a475e21369
+
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
