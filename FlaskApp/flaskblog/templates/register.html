@@ -61,17 +61,17 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{ form.check_code.label(class="form-control-label") }}
+                    {{ form.checkCode.label(class="form-control-label") }}
 
-                    {% if form.check_code.errors %}
-                        {{ form.check_code(class="form-control form-control-lg is-invalid") }}
+                    {% if form.checkCode.errors %}
+                        {{ form.checkCode(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
-                            {% for error in form.check_code.errors %}
+                            {% for error in form.checkCode.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.check_code(class="form-control form-control-lg") }}
+                        {{ form.checkCode(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
             </fieldset>

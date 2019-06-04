@@ -4,6 +4,11 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_login import current_user
 from flaskblog.models import User
+from flaskblog.connection import codes_sql, engine
+
+from sqlalchemy import create_engine
+from geoalchemy2 import Geometry
+import pandas as pd
 
 
 class RegistrationForm(FlaskForm):
@@ -14,7 +19,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
-    check_code = StringField('PIN Code', 
+    checkCode = StringField('PIN Code', 
                             validators=[DataRequired(), Length(8)])
     submit = SubmitField('Sign Up')
 
@@ -27,6 +32,19 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
+
+    def validate_checkCode(self, checkCode):
+        checkCode = checkCode.data
+        if checkCode in codes_sql.values:
+            row = codes_sql[codes_sql.PIN_codes != checkCode]
+            # newDf = codes_sql.drop(row)
+            row.to_sql('codes', engine, if_exists= 'replace', index=False)
+            print("inside")
+        else:
+            raise ValidationError('PIN not correct')
+            
+                    
+
 
 
 

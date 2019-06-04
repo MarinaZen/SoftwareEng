@@ -1,22 +1,11 @@
 <!-- template for the interactive map -->
 {% extends "layout.html" %}
 {% block content %}
+<div class="container">
     <div class="row">
-        <div class="col-md-3">
-            <div class="form-group">
-                <label for="FormControlSelect">Select station</label>
-                <select class="form-control" id="FormControlSelect">
-
-                  <option>{{ stations.type }}</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select>
-              </div>
-        </div>
-        <div id="mapid" class="col-md-9"></div>
+        <div id="mapid" class="col-md-12"></div>
     </div>
+</div>
 
 <script type="text/javascript" >
 
