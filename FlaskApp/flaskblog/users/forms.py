@@ -6,8 +6,7 @@ from flask_login import current_user
 from flaskblog.models import User
 from flaskblog.connection import codes_sql, engine
 
-from sqlalchemy import create_engine
-from geoalchemy2 import Geometry
+
 import pandas as pd
 
 
@@ -37,16 +36,11 @@ class RegistrationForm(FlaskForm):
         checkCode = checkCode.data
         if checkCode in codes_sql.values:
             row = codes_sql[codes_sql.PIN_codes != checkCode]
-            # newDf = codes_sql.drop(row)
             row.to_sql('codes', engine, if_exists= 'replace', index=False)
             print("inside")
         else:
             raise ValidationError('PIN not correct')
-            
-                    
-
-
-
+                                
 
 class LoginForm(FlaskForm):
     email = StringField('Email',
