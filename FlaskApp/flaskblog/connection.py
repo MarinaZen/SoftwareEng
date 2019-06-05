@@ -3,7 +3,7 @@ from geoalchemy2 import Geometry
 import pandas as pd
 import geopandas as gpd
 import json
-import geojson
+from geojson import dump
 
 #connection with postgres
 engine = create_engine('postgresql://postgres:1234@localhost:5432/se4g')
@@ -15,7 +15,9 @@ bike_sql= pd.read_sql_table('bike',engine)
 stations_sql = gpd.GeoDataFrame.from_postgis('stations',engine, geom_col='wkb_geometry')
 # print(stations_sql)
 #coverting to json bike_sql
-bikeJson = bike_sql.to_json(orient='columns')
+# bikeJson = bike_sql.to_json(orient='columns')
+# with open('Test.json', 'w', encoding='utf8') as fp:
+#     dump(bikeJson, fp, sort_keys=True, ensure_ascii=False)
 # print(bikeJson)
 #print(codes_sql.at[0,'PIN_codes'])
 
@@ -31,9 +33,13 @@ def df_to_geojson(df, properties, lat='lat', lon='lon'):
         for prop in properties:
             feature['properties'][prop] = row[prop]
         geojson['features'].append(feature)
+    
     return geojson
+  
 
 #definitions of the geojeson fields to push in properties
 cols = ["id", "bike_sh", "indirizzo", "stalli", "localiz", "lat", "lon"]
 stations = df_to_geojson(stations_sql, cols)
+# with open('Test.geojson', 'w', encoding='utf8') as fp:
+#     dump(stations, fp, sort_keys=True, ensure_ascii=False)
 # print(stations)
