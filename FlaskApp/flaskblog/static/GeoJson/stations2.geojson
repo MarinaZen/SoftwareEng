@@ -1,4 +1,4 @@
-{
+stations = [{
 "type": "FeatureCollection",
 "name": "stations2",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
@@ -66,3 +66,4 @@
 { "type": "Feature", "properties": { "ID": 62, "BIKE_SH": "62 Treves", "INDIRIZZO": "L.go Treves", "STALLI": 24, "LOCALIZ": "Carreggiata", "lat": 45.475, "lon": 9.187, "title": "62 Treves" }, "geometry": { "type": "Point", "coordinates": [ 9.186787851252022, 45.475045006193696 ] } }
 ]
 }
+];
