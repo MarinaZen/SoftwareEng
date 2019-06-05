@@ -64,7 +64,7 @@
                             '<strong>Available Bikes: </strong>' + popupContent[8] + "<br/>" +
                             "<br/>" +
                             '{% if current_user.is_authenticated %}' +
-                            '<a href="{{ url_for("main.about") }}" class="btn btn-success active" role="button">Statistic</a>',
+                            '<a href="{{ url_for("main.statistics") }}" class="btn btn-success active" role="button">Statistic</a>',
                             '{% else %}' +
                             '<a href="{{ url_for("users.login") }}" class="btn btn-success active" role="button">Login to see statistic</a>',
                             '{% endif %}');

@@ -12,15 +12,15 @@ import geopandas as gpd
 
 
 
-engine = create_engine('postgresql://postgres:12345@localhost:5433/se4g')
+engine = create_engine('postgresql://postgres:Sherlocked2112?@localhost:5432/se4g')
 
 #input data
-df= pd.read_csv('/media/sf_Condivisa/Laboratorio/LabData/bike.csv')
-df2= pd.read_csv('/media/sf_Condivisa/Laboratorio/LabData/codes.csv')
-gdf= gpd.read_file('/media/sf_Condivisa/Laboratorio/LabData/stations.shp')
+#df= pd.read_csv('/media/sf_Condivisa/Laboratorio/LabData/bike.csv')
+df2= pd.read_csv(r'C:\Users\lawfr\Desktop\DEFINITIVO\SoftwareEng\LabData\codes.csv')
+#gdf= gpd.read_file('/media/sf_Condivisa/Laboratorio/LabData/stations.shp')
 
 #write bike and shp into Postgre
-df.to_sql('bike', engine, if_exists= 'replace', index=False)
+#df.to_sql('bike', engine, if_exists= 'replace', index=False)
 df2.to_sql('codes', engine, if_exists= 'replace', index=False)
 
 
