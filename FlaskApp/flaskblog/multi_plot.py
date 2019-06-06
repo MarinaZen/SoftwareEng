@@ -49,6 +49,8 @@ data = ColumnDataSource({'x' : hours, 'y': list(bike[bike["date"] == curr_date.d
 p = figure(title='Daily trend of the number of bikes in a selected station', title_location='above', x_axis_label = 'Hour of the day', y_axis_label = 'Number of bikes', x_range=(1, 24))
 p.line(x='x', y='y', source=data, color= (9, 119, 27))
 p.circle(x = 'x', y = 'y', source=data, color = (9, 119, 27), size = 10, alpha = 0.8)
+p.title.text_color = '#ff6347'
+p.title.text_font_size = '13pt'
 
 #Create Select Widget
 select_widget_1 = Select(options = options, value = options[0], 
@@ -84,6 +86,8 @@ days_1 = list(bike_1_days.index)
 data_1 = ColumnDataSource({'x_1' : days_1, 'y_1': list(bike_1_days['1'])})
 
 p1 = figure(title='Median number of bikes for each week-day in a selected station', title_location='above', x_axis_label = 'Day of the week', y_axis_label = 'Median number of bikes')
+p1.title.text_color = '#ff6347'
+p1.title.text_font_size = '13pt'
 p1.vbar(x='x_1', top='y_1', source = data_1, width=0.9, color = (9, 119, 27)) 
 p1.xaxis.major_label_overrides = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday', 5: 'Saturday', 6: 'Sunday'} 
 
@@ -114,6 +118,8 @@ data_2 = ColumnDataSource({'x_2' : months_2, 'y_2': list(bike_2_months['1'])})
 
 p2 = figure(title='Median number of bikes for each month in a selected station', title_location='above', x_axis_label = 'Month of the year', y_axis_label = 'Median number of bikes')
 p2.vbar(x='x_2', top='y_2', source = data_2, width=0.9, color = (9, 119, 27))
+p2.title.text_color = '#ff6347'
+p2.title.text_font_size = '13pt'
 p2.xaxis.ticker = months_2
 p2.xaxis.major_label_overrides = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sep',
      10: 'Oct', 11: 'Nov', 12: 'Dec'}
