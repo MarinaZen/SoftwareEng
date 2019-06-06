@@ -6,7 +6,7 @@
         <div id="mapid" class="col-md-12"></div>
     </div>
 </div>
-
+<script type="text/javascript" src="static/GeoJson/flowBike.json"></script>
 <script type="text/javascript" src="static/GeoJson/stations.geojson"></script>
 <script type="text/javascript" >
 
@@ -37,15 +37,29 @@
                     maxZoom: 20, 
                     accessToken: accessToken
                     });
-    //PopUp points
 
+
+    //get today hour
+    var today = new Date();
+    var time = today.getHours() + ":00";
+    var bikeflow = [];
+    //delete time from bikeFlow                
+    flow.forEach(function(element){
+        if(element.time.includes(time)){
+            bikeflow.push(element);
+            delete bikeflow[0].time;    
+        }
+    });
+
+    
+    var i = 1;
     function forEachFeature(feature, layer) {
         var popupContent = [];
+        
 
         // render properties
 
         for (var key in feature.properties) {
-
             popupContent.push(feature.properties[key]);
             }
             // render coordinates
@@ -58,16 +72,17 @@
                             '<center><strong>' + popupContent[2] + "</strong></center><br/>Other Information:<br/>" +
                             '<strong>Stalls: </strong>' + popupContent[3] + "<br/>" +
                             '<strong>Location: </strong>' + popupContent[4] + "<br/>" +
-                            '<strong>Latitude: </strong>' + popupContent[5] + "<br/>" +
-                            '<strong>Longitude: </strong>' + popupContent[6] + "<br/>" +
-                            '<strong>Available Bikes: </strong>' + popupContent[8] + "<br/>" +
+                            '<strong>Latitude: </strong>' + popupContent[8] + "<br/>" +
+                            '<strong>Longitude: </strong>' + popupContent[9] + "<br/>" +
+                            '<strong>Available Bikes: </strong>' + bikeflow[0][i] + "<br/>" +
                             "<br/>" +
                             '{% if current_user.is_authenticated %}' +
                             '<a href="{{ url_for("main.statistics") }}" class="btn btn-success active" role="button">Statistic</a>',
                             '{% else %}' +
                             '<a href="{{ url_for("users.login") }}" class="btn btn-success active" role="button">Login to see statistic</a>',
                             '{% endif %}');
-            };
+        i += 1;
+    };
 
 
     var stations = L.geoJSON(stations, {
@@ -77,21 +92,18 @@
             icon: new L.AwesomeNumberMarkers({
             number: feature.properties.ID, 
             markerColor: 'green'
+                })
             })
-        })
         }
     });
 
     //Map
-
     var map = L.map('mapid',{
             center: [home.lat, home.lng],
             zoom: home.zoom,
             layers: [streets, stations]
         });
 
-   
-            
     var baseMaps = {
         "Open Street Map": streets,
         "Grayscale": grayscale,
@@ -120,7 +132,6 @@
     }
 
     map.on('locationfound', onLocationFound);
-
         function onLocationError(e) {
         alert(e.message);
     }
@@ -150,10 +161,10 @@
 
     //popup for asking directions
     function createButton(label, container) {
-    var btn = L.DomUtil.create('button', '', container);
-    btn.setAttribute('type', 'button');
-    btn.innerHTML = label;
-    return btn;
+        var btn = L.DomUtil.create('button', '', container);
+        btn.setAttribute('type', 'button');
+        btn.innerHTML = label;
+        return btn;
     }
 
 
@@ -173,7 +184,7 @@
         //subs waypoints
         L.DomEvent.on(startBtn, 'click', function() {
             routing.spliceWaypoints(0, 1, e.latlng);
-                map.closePopup();
+            map.closePopup();
             });
 
         L.DomEvent.on(destBtn, 'click', function() {
@@ -184,13 +195,13 @@
 
     //Selection of the station
     var selector = L.control({
-    position: 'topleft'
+        position: 'topleft'
     });
 
     selector.onAdd = function(map) {
-    var div = L.DomUtil.create('div', 'mySelector');
-    div.innerHTML = '<select id="marker_select"><option value="init">(select item)</option></select>';
-    return div;
+        var div = L.DomUtil.create('div', 'mySelector');
+        div.innerHTML = '<select id="marker_select"><option value="init">(select item)</option></select>';
+        return div;
     };
 
     selector.addTo(map);
@@ -204,7 +215,7 @@
 
     var marker_select = L.DomUtil.get("marker_select");
     L.DomEvent.addListener(marker_select, 'click', function(e) {
-    L.DomEvent.stopPropagation(e);
+        L.DomEvent.stopPropagation(e);
     });
     L.DomEvent.addListener(marker_select, 'change', changeHandler);
 
@@ -213,7 +224,7 @@
         map.closePopup();
     } else {
         stations.getLayer(e.target.value).openPopup();
-    }
+        }
     }
 
   
