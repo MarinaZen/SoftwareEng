@@ -1,6 +1,6 @@
 from flask import render_template, request, Blueprint
 from flaskblog.models import Post
-
+from flask_login import login_required
 import subprocess
 from bokeh.embed import server_document
 
@@ -31,7 +31,7 @@ def map():
     return render_template('map.html', title='Map')
 
 @main.route("/statistics")
-#@login_required
+@login_required
 def statistics():
     script=server_document("http://localhost:5006/multi_plot")
     print(script)

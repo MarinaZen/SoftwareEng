@@ -21,3 +21,9 @@ Pillow==5.3.0
 SQLAlchemy==1.2.7
 
 WTForms==2.1
+
+Bokeh==1.0.4
+
+GeoPandas==0.4.1
+
+Pandas==0.24.2
