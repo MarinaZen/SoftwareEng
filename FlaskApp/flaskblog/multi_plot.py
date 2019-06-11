@@ -10,7 +10,7 @@ from bokeh.layouts import column, row
 import math
 from sqlalchemy import create_engine
 
-engine = create_engine('postgresql://postgres:1234@localhost:5432/se4g')
+engine = create_engine('postgresql://postgres:Tippete123@localhost:5432/se4genv')
 bike = pd.read_sql_table('bike',engine)
 bike_1 = pd.read_sql_table('bike',engine)
 bike_2 = pd.read_sql_table('bike',engine)
