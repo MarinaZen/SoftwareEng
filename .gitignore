@@ -1,0 +1,4 @@
+# ignora il file file_da_ignorare.txt solo all'interno della directory base
+# NON ignora nome_cartella/file_da_ignorare.txt
+/FlaskApp/__pycache__
+/FlaskApp/flaskblog/__pycache__
